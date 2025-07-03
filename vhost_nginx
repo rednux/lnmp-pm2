@@ -1,0 +1,51 @@
+Buat folder baru:
+
+# mkdir -p /var/www/galasky.co.id/public_html
+# chown -R nginx:nginx /var/www/galasky.co.id
+# chmod -R 755 /var/www/galasky.co.id
+
+# echo "<h1>Welcome to galasky.co.id</h1>" > /var/www/galasky.co.id/public_html/index.html
+
+# nano /etc/nginx/conf.d/galasky.co.id.conf
+
+// conf
+
+server {
+    listen 80;
+    server_name galasky.co.id www.galasky.co.id;
+
+    root /var/www/galasky.co.id/public_html;
+    index index.html index.php;
+
+    access_log /var/log/nginx/galasky_access.log;
+    error_log /var/log/nginx/galasky_error.log;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass 127.0.0.1:9000;  # Pastikan PHP-FPM aktif di port ini
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+
+//  end
+
+test # nginx -t && systemctl reload nginx
+
+// Tambahkan SSL Let's Encrypt
+
+# dnf install -y epel-release
+# dnf install -y certbot python3-certbot-nginx
+# certbot --nginx -d galasky.co.id -d www.galasky.co.id
+
+// buka firewall
+
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
+
+
+
