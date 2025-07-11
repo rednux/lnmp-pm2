@@ -5,6 +5,7 @@ set -e
 
 echo "🔄 Melakukan update sistem..."
 dnf update -y
+systemctl daemon-reexec
 
 echo "🔧 Memperbaiki dnf.conf..."
 sed -i '/^exclude=/d' /etc/dnf/dnf.conf
@@ -28,7 +29,7 @@ echo "🌐 Menambahkan repo NGINX resmi..."
 cat > /etc/yum.repos.d/nginx.repo <<EOF
 [nginx-stable]
 name=nginx stable repo
-baseurl=https://nginx.org/packages/centos/8/\$basearch/
+baseurl=https://nginx.org/packages/rhel/8/\$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=https://nginx.org/keys/nginx_signing.key
